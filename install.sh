@@ -16,7 +16,7 @@ else
 fi
 
 sudo apt-get install webhook
-
+git clone --branch main https://github.com/rosendolu/automate-hooks.git
 # setup node
 ./hooks/setup-node.sh
 
