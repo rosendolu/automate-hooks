@@ -48,3 +48,4 @@ export NVM_DIR="$HOME/.nvm"
 nvm install node # "node" is an alias for the latest version
 nvm use node
 nvm current >"$HOME/.nvmrc"
+nvm use "$HOME/.nvmrc"

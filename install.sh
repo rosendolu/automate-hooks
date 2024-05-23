@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 cd "$(dirname "$0")"
 BASE_DIR="$HOME/automate-hooks"
 echo "RootDIR: $(pwd)"
@@ -44,11 +45,7 @@ fi
 
 echo "Current directory: $(pwd)"
 
-# Setup node
-chmod +x "$BASE_DIR/hooks/setup-node.sh"
-source "$BASE_DIR/hooks/setup-node.sh"
-
-HOOKS_CONF="$BASE_DIR/hooks.yaml"
+HOOKS_CONF="$BASE_DIR/hook.yaml"
 VARIABLES=("SECRET" "BASE_DIR")
 for var in "${VARIABLES[@]}"; do
     value="${!var}"
@@ -59,8 +56,12 @@ for var in "${VARIABLES[@]}"; do
     sed -i "s|{{${var}}}|${value}|g" "$HOOKS_CONF"
 done
 
+# Setup node
+chmod +x "$BASE_DIR/hooks/setup-node.sh"
+source "$BASE_DIR/hooks/setup-node.sh"
 # Install pm2 and deploy
-sudo npm install -g pm2
+which npm
+npm install -g pm2
 pm2 start "$BASE_DIR/startup.sh" --name webhook --watch
 pm2 startup
 pm2 save
