@@ -47,5 +47,4 @@ export NVM_DIR="$HOME/.nvm"
 
 nvm install node # "node" is an alias for the latest version
 nvm use node
-nvm current >"$HOME/.bashrc" || true
-nvm current >"$HOME/.zshrc" || true
+nvm current >"$HOME/.nvmrc"
