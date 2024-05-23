@@ -1,0 +1,28 @@
+- id: debug
+  execute-command: ./hooks/debug.sh
+  command-working-directory: ./hooks
+  include-command-output-in-response: true
+  incoming-payload-content-type: true
+  pass-arguments-to-command: application/json
+  include-command-output-in-response-on-error: true
+    - source: entire-query
+    - source: entire-headers
+    - source: entire-payload
+- id: wg
+  execute-command: ./hooks/wg.sh
+  command-working-directory: ./hooks
+  include-command-output-in-response: true
+  response-message: "I got the payload!"
+  pass-arguments-to-command: application/json
+  include-command-output-in-response-on-error: true
+  pass-arguments-to-command:
+    - source: url
+      name: action
+  # trigger-rule:  
+  #   and:
+  #     - match:
+  #         type: payload-hmac-sha256
+  #         secret: "",
+  #         parameter:
+  #           source: url
+  #           name: token
