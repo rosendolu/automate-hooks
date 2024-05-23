@@ -1,8 +1,22 @@
 #!/bin/bash
-
+cd "$(dirname "$0")"
 BASE_DIR="$HOME/automate-hooks"
 echo "RootDIR: $(pwd)"
 echo "BASE_DIR: $BASE_DIR"
+
+if [ ! -f "$BASE_DIR/.env.local" ]; then
+    echo "$BASE_DIR/.env.local file not found!"
+    exit 1
+fi
+while IFS='=' read -r key value; do
+    key=$(echo "$key" | xargs)
+    value=$(echo "$value" | xargs)
+    if [ -z "$value" ]; then
+        value=""
+    fi
+    export "$key"="$value"
+done <"$BASE_DIR/.env.local"
+echo "Loaded environment variables:"
 
 # Check Ubuntu system
 if [ -f /etc/os-release ]; then
@@ -33,6 +47,17 @@ echo "Current directory: $(pwd)"
 # Setup node
 chmod +x "$BASE_DIR/hooks/setup-node.sh"
 source "$BASE_DIR/hooks/setup-node.sh"
+
+HOOKS_CONF="$BASE_DIR/hooks.yaml"
+VARIABLES=("SECRET" "BASE_DIR")
+for var in "${VARIABLES[@]}"; do
+    value="${!var}"
+    if [ -z "$value" ]; then
+        echo "Warning: $var is not set"
+        continue
+    fi
+    sed -i "s|{{${var}}}|${value}|g" "$HOOKS_CONF"
+done
 
 # Install pm2 and deploy
 sudo npm install -g pm2

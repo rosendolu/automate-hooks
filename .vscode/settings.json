@@ -1,3 +1,7 @@
 {
-  "editor.defaultFormatter": "foxundermoon.shell-format"
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "foxundermoon.shell-format",
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
