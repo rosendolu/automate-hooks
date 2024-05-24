@@ -22,20 +22,20 @@
     and:
       - match:
         type: "value"
-        value: "get"
+        value: "set"
         parameter:
           source: "url"
           name: "action"
-    or:
-      - match:
-        type: "payload-hmac-sha256"
-        secret: "{{SECRET}}"
-        parameter:
-          source: "header"
-          name: "X-Hub-Signature"
-      - match:
-        type: "value"
-        value: "{{TOKEN}}"
-        parameter:
-          source: "url"
-          name: "token"
+      - or:
+        - match:
+          type: "payload-hmac-sha256"
+          secret: "{{SECRET}}"
+          parameter:
+            source: "header"
+            name: "X-Hub-Signature"
+        - match:
+          type: "value"
+          value: "{{TOKEN}}"
+          parameter:
+            source: "url"
+            name: "token"
