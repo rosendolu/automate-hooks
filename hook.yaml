@@ -1,6 +1,6 @@
 - id: debug
-  execute-command: {{BASE_DIR}}/hooks/debug.sh
-  command-working-directory: {{BASE_DIR}}/hooks
+  execute-command: "{{BASE_DIR}}/hooks/debug.sh"
+  command-working-directory: "{{BASE_DIR}}/hooks"
   include-command-output-in-response: true
   incoming-payload-content-type: "application/json"
   include-command-output-in-response-on-error: true
@@ -9,8 +9,8 @@
     - source: entire-headers
     - source: entire-payload
 - id: wg
-  execute-command: {{BASE_DIR}}/hooks/wg.sh
-  command-working-directory: {{BASE_DIR}}/hooks
+  execute-command: "{{BASE_DIR}}/hooks/wg.sh"
+  command-working-directory: "{{BASE_DIR}}/hooks"
   include-command-output-in-response: true
   response-message: "I got the payload!"
   incoming-payload-content-type: "application/json"
@@ -18,17 +18,24 @@
   pass-arguments-to-command:
     - source: url
       name: action
-  trigger-rule:  
+  trigger-rule: 
+    and:
+      - match:
+          type: "value"
+          value: "get"
+          parameter:
+            source: "url"
+            name: "action"
     or:
       - match:
           type: "payload-hmac-sha256"
-          secret: {{SECRET}},
+          secret: "{{SECRET}}",
           parameter:
-            source: header
-            name: Authorization
+            source: "header"
+            name: "X-Hub-Signature"
       - match:
-          type: "payload-hmac-sha256"
-          secret: {{SECRET}},
+          type: "value"
+          value: "{{TOKEN}}",
           parameter:
-            source: url
-            name: token
+            source: "url"
+            name: "token"

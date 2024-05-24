@@ -5,19 +5,28 @@ BASE_DIR="$HOME/automate-hooks"
 echo "RootDIR: $(pwd)"
 echo "BASE_DIR: $BASE_DIR"
 
-if [ ! -f "$BASE_DIR/.env.local" ]; then
-    echo "$BASE_DIR/.env.local file not found!"
-    exit 1
+if [ -d "$BASE_DIR" ]; then
+    echo "Directory \"$BASE_DIR\" exists"
+    cd "$BASE_DIR"
+    git pull
+else
+    git clone --branch main https://github.com/rosendolu/automate-hooks.git "$BASE_DIR"
+    cd "$BASE_DIR"
 fi
-while IFS='=' read -r key value; do
-    key=$(echo "$key" | xargs)
-    value=$(echo "$value" | xargs)
-    if [ -z "$value" ]; then
-        value=""
-    fi
-    export "$key"="$value"
-done <"$BASE_DIR/.env.local"
-echo "Loaded environment variables:"
+
+echo "Current directory: $(pwd)"
+
+if [ -f "$BASE_DIR/.env.local" ]; then
+    while IFS='=' read -r key value; do
+        key=$(echo "$key" | xargs)
+        value=$(echo "$value" | xargs)
+        if [ -z "$value" ]; then
+            value=""
+        fi
+        export "$key"="$value"
+    done <"$BASE_DIR/.env.local"
+    echo "Loaded environment variables:"
+fi
 
 # Check Ubuntu system
 if [ -f /etc/os-release ]; then
@@ -34,17 +43,6 @@ fi
 sudo apt-get update -y
 sudo apt-get install webhook git -y
 
-if [ -d "$BASE_DIR" ]; then
-    echo "Directory \"$BASE_DIR\" exists"
-    cd "$BASE_DIR"
-    git pull
-else
-    git clone --branch main https://github.com/rosendolu/automate-hooks.git "$BASE_DIR"
-    cd "$BASE_DIR"
-fi
-
-echo "Current directory: $(pwd)"
-
 HOOKS_CONF="$BASE_DIR/hook.yaml"
 VARIABLES=("SECRET" "BASE_DIR")
 for var in "${VARIABLES[@]}"; do
@@ -59,6 +57,7 @@ done
 # Setup node
 chmod +x "$BASE_DIR/hooks/setup-node.sh"
 source "$BASE_DIR/hooks/setup-node.sh"
+
 # Install pm2 and deploy
 which npm
 npm install -g pm2

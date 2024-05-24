@@ -4,12 +4,12 @@
 > Powered by [webhook](https://github.com/adnanh/webhook?tab=readme-ov-file), based on `ubuntu` server
 
 
- 
+## Quick start
 ```sh
 curl -o- https://raw.githubusercontent.com/rosendolu/automate-hooks/main/install.sh | bash
 ```
 
-## setup
+## Sept by step setup
 
 
 ```sh
