@@ -51,6 +51,7 @@ for env_file in "$BASE_DIR"/.env.*; do
         while IFS='=' read -r key value; do
             key=$(echo "$key" | xargs)
             value=$(echo "$value" | xargs)
+            echo "$key=$value"
             export "$key"="$value"
         done <"$env_file"
         echo "Loaded environment variables from $env_file"
