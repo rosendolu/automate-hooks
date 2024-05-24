@@ -36,7 +36,8 @@ pm2 ls
 if [ -d "$BASE_DIR" ]; then
     echo "Directory \"$BASE_DIR\" exists"
     cd "$BASE_DIR"
-    git pull
+    git fetch origin
+    git reset --hard origin/main
 else
     git clone --branch main https://github.com/rosendolu/automate-hooks.git "$BASE_DIR"
     cd "$BASE_DIR"
