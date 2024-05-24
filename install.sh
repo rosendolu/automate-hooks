@@ -13,6 +13,25 @@ if ! command -v webhook >/dev/null; then
     sudo apt-get install webhook git -y
 fi
 
+# Install Node.js and npm if not already installed
+if ! command -v node >/dev/null; then
+    chmod +x "$BASE_DIR/hooks/setup-node.sh"
+    source "$BASE_DIR/hooks/setup-node.sh"
+fi
+
+echo "NODE -v: $(node -v)"
+echo "NPM -v: $(npm -v)"
+
+# Install pm2 if not already installed
+if ! command -v pm2 >/dev/null; then
+    npm install -g pm2
+else
+    pm2 update
+fi
+pm2 stop webhook || true
+pm2 save --force
+pm2 ls
+
 # Clone or update the repository
 if [ -d "$BASE_DIR" ]; then
     echo "Directory \"$BASE_DIR\" exists"
@@ -25,15 +44,17 @@ fi
 
 echo "Current directory: $(pwd)"
 
-# Load environment variables from .env.local if it exists
-if [ -f "$BASE_DIR/.env.local" ]; then
-    while IFS='=' read -r key value; do
-        key=$(echo "$key" | xargs)
-        value=$(echo "$value" | xargs)
-        export "$key"="$value"
-    done <"$BASE_DIR/.env.local"
-    echo "Loaded environment variables:"
-fi
+# Load environment variables from .env.* files in the current directory
+for env_file in "$BASE_DIR"/.env.*; do
+    if [ -f "$env_file" ]; then
+        while IFS='=' read -r key value; do
+            key=$(echo "$key" | xargs)
+            value=$(echo "$value" | xargs)
+            export "$key"="$value"
+        done <"$env_file"
+        echo "Loaded environment variables from $env_file"
+    fi
+done
 
 # Check if the system is Ubuntu
 if [ -f /etc/os-release ]; then
@@ -58,24 +79,6 @@ for var in "${VARIABLES[@]}"; do
     fi
     sed -i "s|{{${var}}}|${value}|g" "$HOOKS_CONF"
 done
-
-# Install Node.js and npm if not already installed
-if ! command -v node >/dev/null; then
-    chmod +x "$BASE_DIR/hooks/setup-node.sh"
-    source "$BASE_DIR/hooks/setup-node.sh"
-fi
-
-echo "NODE -v: $(node -v)"
-echo "NPM -v: $(npm -v)"
-
-# Install pm2 if not already installed
-if ! command -v pm2 >/dev/null; then
-    npm install -g pm2
-else
-    pm2 update
-fi
-pm2 save --force
-pm2 ls
 
 # Start or restart the webhook application with pm2
 if pm2 ls | grep -q "webhook"; then

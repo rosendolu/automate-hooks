@@ -16,13 +16,19 @@ curl -o- https://raw.githubusercontent.com/rosendolu/automate-hooks/main/install
 git clone https://github.com/rosendolu/automate-hooks.git
 ```
 
-Set custom `.env.local`
+Set env conf
+
 
 ```sh
-SECRET=xxxx
+cp .env .env.local
+```
+Update as you desired
+```sh
+SECRET=secret
+TOKEN=token
 ```
 
-Install 
+Run install 
 ```sh
 bash install.sh
 ```
