@@ -49,7 +49,7 @@ fi
 
 # Replace variables in hook.yaml
 HOOKS_CONF="$BASE_DIR/hook.yaml"
-VARIABLES=("SECRET" "BASE_DIR")
+VARIABLES=("SECRET" "BASE_DIR" "TOKEN")
 for var in "${VARIABLES[@]}"; do
     value="${!var}"
     if [ -z "$value" ]; then
@@ -63,13 +63,19 @@ done
 if ! command -v node >/dev/null; then
     chmod +x "$BASE_DIR/hooks/setup-node.sh"
     source "$BASE_DIR/hooks/setup-node.sh"
-    echo "NPM: $(which npm)"
 fi
+
+echo "NODE -v: $(node -v)"
+echo "NPM -v: $(npm -v)"
 
 # Install pm2 if not already installed
 if ! command -v pm2 >/dev/null; then
     npm install -g pm2
+else
+    pm2 update
 fi
+pm2 save --force
+pm2 ls
 
 # Start or restart the webhook application with pm2
 if pm2 ls | grep -q "webhook"; then
