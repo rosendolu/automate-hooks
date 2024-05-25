@@ -38,8 +38,8 @@ fi
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
-check_and_source_file "$HOME/.bashrc"
-check_and_source_file "$HOME/.zshrc"
+# check_and_source_file "$HOME/.bashrc"
+# check_and_source_file "$HOME/.zshrc"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
