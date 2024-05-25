@@ -76,8 +76,8 @@ VARIABLES=("SECRET" "BASE_DIR" "TOKEN")
 for var in "${VARIABLES[@]}"; do
     value="${!var}"
     if [ -z "$value" ]; then
-        echo "Warning: $var is not set"
-        continue
+        echo "Error: $var is not set"
+        exit 1
     fi
     sed -i "s|{{${var}}}|${value}|g" "$HOOKS_CONF"
 done

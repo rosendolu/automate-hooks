@@ -8,6 +8,22 @@
     - source: entire-query
     - source: entire-headers
     - source: entire-payload
+- id: exec
+  execute-command: "{{BASE_DIR}}/hooks/exec.sh"
+  command-working-directory: "{{BASE_DIR}}/hooks"
+  include-command-output-in-response: true
+  # incoming-payload-content-type: "application/json"
+  include-command-output-in-response-on-error: true
+  pass-arguments-to-command:
+    - source: entire-payload
+  trigger-rule: 
+    match:
+      type: value
+      value: {{TOKEN}}
+      parameter:
+        source: url
+        name: token
+
 - id: wg
   execute-command: "{{BASE_DIR}}/hooks/wg.sh"
   command-working-directory: "{{BASE_DIR}}/hooks"
@@ -19,10 +35,9 @@
     - source: url
       name: action
   trigger-rule: 
-    and:
-      - match:
-        type: "value"
-        value: "{{TOKEN}}"
-        parameter:
-          source: "url"
-          name: "token"
+    match:
+      type: value
+      value: {{TOKEN}}
+      parameter:
+        source: url
+        name: token
