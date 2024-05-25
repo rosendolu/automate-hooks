@@ -12,10 +12,11 @@
   execute-command: "{{BASE_DIR}}/hooks/exec.sh"
   command-working-directory: "{{BASE_DIR}}/hooks"
   include-command-output-in-response: true
-  # incoming-payload-content-type: "application/json"
+  incoming-payload-content-type: "application/json"
   include-command-output-in-response-on-error: true
   pass-arguments-to-command:
-    - source: entire-payload
+    - source: payload
+      name: "command"
   trigger-rule: 
     match:
       type: value
