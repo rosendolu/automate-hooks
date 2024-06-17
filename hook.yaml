@@ -24,7 +24,6 @@
       parameter:
         source: url
         name: token
-
 - id: wg
   execute-command: "{{BASE_DIR}}/hooks/wg.sh"
   command-working-directory: "{{BASE_DIR}}/hooks"
@@ -35,6 +34,25 @@
   pass-arguments-to-command:
     - source: url
       name: action
+  trigger-rule: 
+    match:
+      type: value
+      value: {{TOKEN}}
+      parameter:
+        source: url
+        name: token
+- id: clone_repo
+  execute-command: "{{BASE_DIR}}/hooks/clone_repo.sh"
+  command-working-directory: "{{BASE_DIR}}/hooks"
+  include-command-output-in-response: true
+  response-message: "I got the payload!"
+  incoming-payload-content-type: "application/json"
+  include-command-output-in-response-on-error: true
+  pass-arguments-to-command:
+    - source: payload
+      name: payload.repo_url
+    - source: payload
+      name: payload.branch_name
   trigger-rule: 
     match:
       type: value
