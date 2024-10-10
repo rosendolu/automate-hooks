@@ -26,5 +26,37 @@ if [[ "${action}" == "set" ]]; then
     wg-quick up "$WG_CONF_FILE_PATH"
 fi
 
+if [[ "${action}" == "config" ]]; then
+
+    # target WireGuard config file path
+    WG_CONF="/etc/wireguard/wg0.conf"
+
+    # check WireGuard config file exists
+    if [[ ! -f "$WG_CONF" ]]; then
+        echo "WireGuard config file not found: $WG_CONF"
+        exit 1
+    fi
+
+    # tarverse WireGuard config file ，find all peer name
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^#\ BEGIN_PEER\ (.*)$ ]]; then
+            peer_name="${BASH_REMATCH[1]}"
+            peer_conf="$HOME/$peer_name.conf"
+
+            echo "Found peer: $peer_name"
+
+            # check coresponding conf file
+            if [[ -f "$peer_conf" ]]; then
+                echo "Reading config for $peer_name from $peer_conf:"
+                cat "$peer_conf"
+                echo ""
+            else
+                echo "Config file not found for $peer_name: $peer_conf"
+            fi
+        fi
+    done <"$WG_CONF"
+
+fi
+
 echo "Previous: ${PreviousListenPort}"
 echo "Current: ${defaultNextPort}"
